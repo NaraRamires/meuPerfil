@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Estilo para a imagem de perfil ao passar o mouse */
+        #profileImage:hover {
+            opacity: 0.7;
+            cursor: pointer;
+        }
+
+        /* Estilo para os itens da lista de hobbies enquanto estão sendo arrastados */
+        .dragging {
+            opacity: 0.5;
+        }
+
+        /* Estilo para o botão de excluir */
+        .delete-btn {
+            cursor: pointer;
+            font-size: 16px;
+            color: red;
+            background: none;
+            border: none;
+        }
+
+        .delete-btn:hover {
+            color: darkred;
+        }
+
+        /* Estilo para o menu de seleção de cor */
+        .color-options {
+            display: none;
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <!-- Card do Perfil -->
+        <div class="card" id="profileCard">
+            <div class="card-body text-center">
+                <!-- Imagem de perfil (clicável para alterar) -->
+                <img src="https://via.placeholder.com/150" alt="Imagem de perfil" id="profileImage" class="rounded-circle mb-3" style="width: 150px;">
+                
+                <!-- Botão para alterar a imagem -->
+                <input type="file" id="fileInput" style="display: none;" onchange="alterarImagem()">
+                
+                <!-- Nome e Idade -->
+                <h3 id="profileName">Nome: meu perfil</h3>
+                <p id="profileAge">Idade: 18</p>
+                
+                <!-- Lista de hobbies -->
+                <h5>Hobbies</h5>
+                <ul id="hobbiesList" class="list-group mb-3" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <li class="list-group-item" id="hobby1" draggable="true" ondragstart="drag(event)">
+                        Literatura
+                        <button class="delete-btn" onclick="removerHobby(this)">🗑️</button>
+                    </li>
+                    <li class="list-group-item" id="hobby2" draggable="true" ondragstart="drag(event)">
+                        Esportes
+                        <button class="delete-btn" onclick="removerHobby(this)">🗑️</button>
+                    </li>
+                    <li class="list-group-item" id="hobby3" draggable="true" ondragstart="drag(event)">
+                        Música
+                        <button class="delete-btn" onclick="removerHobby(this)">🗑️</button>
+                    </li>
+                </ul>
+
+                <!-- Botões de ação -->
+                <button class="btn btn-primary me-2" onclick="alterarNome()">Alterar Nome</button>
+                <button class="btn btn-secondary me-2" onclick="alterarIdade()">Alterar Idade</button>
+                <button class="btn btn-success me-2" onclick="adicionarHobby()">Adicionar Hobby</button>
+                <button class="btn btn-warning me-2" onclick="mostrarOpcoesCor()">Alterar Cor de Fundo</button>
+                <button class="btn btn-danger" onclick="resetar()">Resetar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu de Seleção de Cores -->
+    <div id="colorOptions" class="color-options">
+        <div class="color-option" style="background-color: #F8D7DA;" onclick="mudarCorDeFundo('#F8D7DA')"></div>
+        <div class="color-option" style="background-color: #D1EDDA;" onclick="mudarCorDeFundo('#D1EDDA')"></div>
+        <div class="color-option" style="background-color: #D1ECF1;" onclick="mudarCorDeFundo('#D1ECF1')"></div>
+        <div class="color-option" style="background-color: #FFF3CD;" onclick="mudarCorDeFundo('#FFF3CD')"></div>
+        <div class="color-option" style="background-color: #CCE5FF;" onclick="mudarCorDeFundo('#CCE5FF')"></div>
+        <div class="color-option" style="background-color: #FFEB3B;" onclick="mudarCorDeFundo('#FFEB3B')"></div>
+        <div class="color-option" style="background-color: #FF5722;" onclick="mudarCorDeFundo('#FF5722')"></div>
+        <div class="color-option" style="background-color: #8BC34A;" onclick="mudarCorDeFundo('#8BC34A')"></div>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script>
+        // Função para alterar o nome do perfil
+        function alterarNome() {
+            const novoNome = prompt("Digite seu novo nome:");
+            if (novoNome) {
+                document.getElementById("profileName").textContent = "Nome: " + novoNome;
+            }
+        }
+
+        // Função para alterar a idade
+        function alterarIdade() {
+            const novaIdade = prompt("Digite sua nova idade:");
+            if (novaIdade && !isNaN(novaIdade)) {
+                document.getElementById("profileAge").textContent = "Idade: " + novaIdade;
+            } else {
+                alert("Por favor, insira uma idade válida.");
+            }
+        }
+
+        // Função para adicionar um novo hobby
+        function adicionarHobby() {
+            const novoHobby = prompt("Digite seu novo hobby:");
+            if (novoHobby) {
+                const li = document.createElement("li");
+                li.textContent = novoHobby;
+                li.className = "list-group-item";
+                li.draggable = true;
+                li.setAttribute("ondragstart", "drag(event)");
+
+                // Criar o botão de exclusão para o novo hobby
+                const deleteBtn = document.createElement("button");
+                deleteBtn.className = "delete-btn";
+                deleteBtn.textContent = "🗑️";
+                deleteBtn.onclick = function() {
+                    removerHobby(deleteBtn);
+                };
+
+                li.appendChild(deleteBtn);
+                document.getElementById("hobbiesList").appendChild(li);
+            }
+        }
+
+        // Função para remover um hobby
+        function removerHobby(button) {
+            const li = button.parentElement; // Pega o elemento <li> do hobby
+            li.remove(); // Remove o hobby da lista
+        }
+
+        // Função para mudar a cor de fundo da página
+        function mudarCorDeFundo(cor) {
+            // Aqui alteramos o fundo da página diretamente
+            document.body.style.backgroundColor = cor;
+
+            // Esconde as opções de cor após a seleção
+            esconderOpcoesCor();
+        }
+
+        // Função para mostrar as opções de cores
+        function mostrarOpcoesCor() {
+            const colorOptions = document.getElementById("colorOptions");
+            colorOptions.style.display = colorOptions.style.display === "none" ? "block" : "none";
+        }
+
+        // Função para esconder as opções de cores
+        function esconderOpcoesCor() {
+            document.getElementById("colorOptions").style.display = "none";
+        }
+
+        // Função para resetar a página ao estado inicial
+        function resetar() {
+            document.getElementById("profileName").textContent = "Nome: meu perfil";
+            document.getElementById("profileAge").textContent = "Idade: 18";
+            document.getElementById("hobbiesList").innerHTML = `
+                <li class="list-group-item" id="hobby1" draggable="true" ondragstart="drag(event)">
+                    Literatura
+                    <button class="delete-btn" onclick="removerHobby(this)">🗑️</button>
+                </li>
+                <li class="list-group-item" id="hobby2" draggable="true" ondragstart="drag(event)">
+                    Esportes
+                    <button class="delete-btn" onclick="removerHobby(this)">🗑️</button>
+                </li>
+                <li class="list-group-item" id="hobby3" draggable="true" ondragstart="drag(event)">
+                    Música
+                    <button class="delete-btn" onclick="removerHobby(this)">🗑️</button>
+                </li>
+            `;
+            document.body.style.backgroundColor = "#F8F9FA"; // Cor inicial de fundo
+        }
+
+        // Função para alterar a imagem de perfil
+        document.getElementById("profileImage").addEventListener("click", function() {
+            document.getElementById("fileInput").click();
+        });
+
+        // Função para ler e exibir a nova imagem selecionada
+        function alterarImagem() {
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("profileImage").src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Funções para o arrasto e soltura dos hobbies
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+            ev.target.classList.add("dragging");
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            const draggedItem = document.getElementById(data);
+            const dropTarget = ev.target;
+
+            if (dropTarget && dropTarget !== draggedItem && dropTarget.nodeName === "LI") {
+                const allItems = [...document.querySelectorAll("#hobbiesList .list-group-item")];
+                const draggedIndex = allItems.indexOf(draggedItem);
+                const dropIndex = allItems.indexOf(dropTarget);
+
+                if (draggedIndex < dropIndex) {
+                    dropTarget.parentNode.insertBefore(draggedItem, dropTarget.nextSibling);
+                } else {
+                    dropTarget.parentNode.insertBefore(draggedItem, dropTarget);
+                }
+            }
+
+            draggedItem.classList.remove("dragging");
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
