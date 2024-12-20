@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://via.placeholder.com/1920x1080/ededed/cccccc?text=Background') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        header img {
+            width: 40px;
+            height: 40px;
+        }
+        main {
+            margin: 2rem auto;
+            max-width: 600px;
+            background: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            background-color: #f9f9f9;
+        }
+        li img {
+            width: 40px;
+            height: 40px;
+            margin-right: 1rem;
+            border-radius: 5px;
+        }
+        .remove {
+            color: #d9534f;
+            cursor: pointer;
+        }
+        .suggestions {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .suggestions h3 {
+            margin-top: 0;
+        }
+        .suggestions ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0;
+            list-style: none;
+        }
+        .suggestions li {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .suggestions li:hover {
+            background-color: #e9ecef;
+        }
+        .suggestions li img {
+            width: 30px;
+            height: 30px;
+            margin-right: 0.5rem;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1> 🛒 Lista de Compras</h1>
+    </header>
+    <main>
+        <form id="add-item-form">
+            <input type="text" id="item-input" placeholder="Adicione um item" required>
+            <button type="submit">Adicionar</button>
+        </form>
+        <ul id="shopping-list"></ul>
+
+        <div class="suggestions">
+            <h3>O que você pode comprar:</h3>
+            <ul id="suggestion-list">
+                <li data-item="Maçã">
+                    🍎Maçã
+                </li>
+                <li data-item="Pão">
+                    🍞Pão
+                </li>
+                <li data-item="Leite">
+                   🥛 Leite
+                </li>
+                <li data-item="Arroz">
+                   🍚Arroz
+                </li>
+                <li data-item="Carne">
+                    🥩Carne
+                </li>
+                <li data-item="Ovos">
+                    🥚Ovos
+                </li>
+                <li data-item="Banana">
+                    🍌Banana
+                </li>
+                <li data-item="Café">
+                    ☕Café
+                </li>
+                <li data-item="Azeite">
+                    🫒Azeite
+                </li>
+                <li data-item="Queijo">
+                   🧀 Queijo
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById('add-item-form');
+        const itemInput = document.getElementById('item-input');
+        const shoppingList = document.getElementById('shopping-list');
+        const suggestionList = document.getElementById('suggestion-list');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const itemText = itemInput.value.trim();
+
+            if (itemText !== '') {
+                addItemToList(itemText);
+                itemInput.value = '';
+                itemInput.focus();
+            }
+        });
+
+        suggestionList.addEventListener('click', function(event) {
+            const target = event.target.closest('li');
+            if (target && target.dataset.item) {
+                addItemToList(target.dataset.item);
+            }
+        });
+
+        function addItemToList(itemText) {
+            const li = document.createElement('li');
+
+            const img = document.createElement('img');
+            img.src = `https://via.placeholder.com/40?text=${itemText.charAt(0).toUpperCase()}`;
+            img.alt = itemText;
+
+            const span = document.createElement('span');
+            span.textContent = itemText;
+
+            const removeBtn = document.createElement('span');1
+            removeBtn.textContent = 'Remover';
+            removeBtn.classList.add('remove');
+            removeBtn.addEventListener('click', function() {
+                shoppingList.removeChild(li);
+            });
+
+            li.appendChild(img);
+            li.appendChild(span);
+            li.appendChild(removeBtn);
+            shoppingList.appendChild(li);
+        }
+    </script>
+</body>
+</html>
